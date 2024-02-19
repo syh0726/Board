@@ -1,0 +1,62 @@
+= 회원 API
+:toc:
+
+== 회원가입
+=== 요청
+include::{snippets}/member-create/http-request.adoc[]
+include::{snippets}/member-create/request-fields.adoc[]
+
+== 로그인
+=== 요청
+include::{snippets}/member-signin/http-request.adoc[]
+include::{snippets}/member-signin/request-fields.adoc[]
+=== 응답(헤더 안의 쿠키값)
+include::{snippets}/member-signin/response-cookies.adoc[]
+include::{snippets}/member-signin/response-fields.adoc[]
+include::{snippets}/member-signin/http-response.adoc[]
+
+== 유저 활동 목록
+=== 요청
+include::{snippets}/member-getActivity/path-parameters.adoc[]
+include::{snippets}/member-getActivity/http-request.adoc[]
+
+=== 응답
+include::{snippets}/member-getActivity/response-fields.adoc[]
+include::{snippets}/member-getActivity/http-response.adoc[]
+
+
+== 로그아웃
+=== 요청
+include::{snippets}/member-logout/http-request.adoc[]
+include::{snippets}/member-logout/request-cookies.adoc[]
+=== 응답
+include::{snippets}/member-logout/response-cookies.adoc[]
+include::{snippets}/member-logout/http-response.adoc[]
+
+
+== 유저 정보 불러오기(셋팅)
+=== 요청
+include::{snippets}/member-getProfile/http-request.adoc[]
+include::{snippets}/member-getProfile/request-cookies.adoc[]
+
+=== 응답
+include::{snippets}/member-getProfile/response-fields.adoc[]
+include::{snippets}/member-getProfile/http-response.adoc[]
+
+== 비밀번호 변경
+=== 요청
+include::{snippets}/member-setPassword/http-request.adoc[]
+include::{snippets}/member-setPassword/request-cookies.adoc[]
+include::{snippets}/member-setPassword/request-fields.adoc[]
+
+== 닉네임 변경
+=== 요청
+include::{snippets}/member-setNickName/http-request.adoc[]
+include::{snippets}/member-setNickName/request-cookies.adoc[]
+include::{snippets}/member-setNickName/request-fields.adoc[]
+
+== 휴대폰 번호 변경
+=== 요청
+include::{snippets}/member-setPhoneNumber/http-request.adoc[]
+include::{snippets}/member-setPhoneNumber/request-cookies.adoc[]
+include::{snippets}/member-setPhoneNumber/request-fields.adoc[]

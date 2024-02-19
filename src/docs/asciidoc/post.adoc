@@ -1,0 +1,69 @@
+= 게시글 API
+:toc:
+
+== 게시글 작성
+=== 요청
+include::{snippets}/post-create/http-request.adoc[]
+include::{snippets}/post-create/request-fields.adoc[]
+include::{snippets}/post-create/request-cookies.adoc[]
+
+== 게시글 수정
+=== 요청
+include::{snippets}/post-edit/path-parameters.adoc[]
+include::{snippets}/post-edit/http-request.adoc[]
+include::{snippets}/post-edit/request-fields.adoc[]
+include::{snippets}/post-edit/request-cookies.adoc[]
+
+== 게시글 삭제
+=== 요청
+include::{snippets}/post-delete/path-parameters.adoc[]
+include::{snippets}/post-delete/http-request.adoc[]
+include::{snippets}/post-delete/request-cookies.adoc[]
+
+== 게시글 추천
+=== 요청
+include::{snippets}/post-like/path-parameters.adoc[]
+include::{snippets}/post-like/http-request.adoc[]
+include::{snippets}/post-like/request-cookies.adoc[]
+
+=== 응답
+include::{snippets}/post-like/response-fields.adoc[]
+include::{snippets}/post-like/http-response.adoc[]
+
+== 게시글 비추천
+=== 요청
+include::{snippets}/post-dislike/path-parameters.adoc[]
+include::{snippets}/post-dislike/http-request.adoc[]
+include::{snippets}/post-dislike/request-cookies.adoc[]
+
+=== 응답
+include::{snippets}/post-like/response-fields.adoc[]
+include::{snippets}/post-like/http-response.adoc[]
+
+
+== 게시글 확인
+=== 요청
+include::{snippets}/post-get/path-parameters.adoc[]
+include::{snippets}/post-get/http-request.adoc[]
+=== 응답
+include::{snippets}/post-get/response-fields.adoc[]
+include::{snippets}/post-get/http-response.adoc[]
+
+== 게시글 리스트
+=== 요청
+include::{snippets}/posts-getbyCategory/path-parameters.adoc[]
+include::{snippets}/posts-getbyCategory/http-request.adoc[]
+include::{snippets}/posts-get/http-request.adoc[]
+
+=== 응답
+include::{snippets}/posts-get/response-fields.adoc[]
+include::{snippets}/posts-get/http-response.adoc[]
+
+== 게시글 검색
+
+=== 요청
+include::{snippets}/posts-search/http-request.adoc[]
+include::{snippets}/posts-search/query-parameters.adoc[]
+=== 응답
+include::{snippets}/posts-search/response-fields.adoc[]
+include::{snippets}/posts-search/http-response.adoc[]
