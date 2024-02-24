@@ -35,7 +35,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
         Cookie[] cookies= httpServletRequest.getCookies();
 
-        if(cookies.length==0){
+        if(cookies==null){
             log.error("쿠키가 없음");
             throw new UnAuthException();
         }

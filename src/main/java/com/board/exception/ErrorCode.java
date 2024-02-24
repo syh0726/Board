@@ -12,7 +12,7 @@ public enum ErrorCode{
     //권한관련 에러
     AUTH_INVALID_MEMBER(403,"A001","사용자가 일치 하지 않습니다. 권한이 없습니다."),
     SESSION_NOT_FOUND(404,"A002","세션값을 찾을 수 없습니다."),
-    UN_AUTH(401,"A003","인증이 필요합니다"),
+    UN_AUTH(401,"A003","로그인 해주세요."),
 
     //댓글 관련 에러
     COMMENT_NOT_FOUND(404,"CMT001","댓글이 존재하지 않습니다."),

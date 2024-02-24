@@ -99,12 +99,26 @@ public class MemberService {
     @Transactional
     public void changePhoneNumber(ChangePhoneServiceDto changePhoneServiceDto) {
         Member member=memberRepository.findById(changePhoneServiceDto.getId()).orElseThrow(MemberNotFoundException::new);
+
+        Member emailMember=memberRepository.findByPhoneNumber(changePhoneServiceDto.getPhoneNumber());
+
+        if(emailMember!=null){
+            throw new AlreadyExistPhoneNumberException();
+        }
+
         member.changePhoneNumber(changePhoneServiceDto.getPhoneNumber());
     }
 
     @Transactional
     public void changeNickName(ChangeNicknameServiceDto changeNicknameServiceDto) {
         Member member=memberRepository.findById(changeNicknameServiceDto.getId()).orElseThrow(MemberNotFoundException::new);
+
+        Member nickNameMember=memberRepository.findByNickname(changeNicknameServiceDto.getNickName());
+
+        if(nickNameMember!=null){
+            throw new AlreadyExistNicknameException();
+        }
+
         member.changeNickname(changeNicknameServiceDto.getNickName());
     }
 
