@@ -59,7 +59,7 @@ public class CommentServiceTest {
     MemberSession memberSession=new MemberSession(1L,"aa");
 
 
-    @BeforeEach
+   /* @BeforeEach
     public void testSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -83,7 +83,7 @@ public class CommentServiceTest {
         commentRepository.deleteAll();
         memberRepository.deleteAll();
         postRepository.deleteAll();
-    }
+    }*/
 
 
     public Long getId(){

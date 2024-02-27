@@ -14,7 +14,7 @@ public class AuthService {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .domain("localhost")
+                .domain("community-board.store")
                 .build();
     }
 
@@ -25,7 +25,7 @@ public class AuthService {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .domain("localhost")
+                .domain("community-board.store")
                 .build();
     }
 

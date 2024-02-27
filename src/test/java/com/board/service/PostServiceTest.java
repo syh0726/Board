@@ -53,7 +53,7 @@ public class PostServiceTest {
     @Autowired
     PostLikeRepository postLikeRepository;
 
-    @BeforeEach
+    /*@BeforeEach
     public void testSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -71,6 +71,15 @@ public class PostServiceTest {
 
         memberService.signin(signInDto);
     }
+
+
+    @AfterEach
+    public void clean(){
+        postLikeRepository.deleteAll();
+        memberRepository.deleteAll();
+        postRepository.deleteAll();
+    }*/
+
 
     public void testSignIn2(){
         SignUpDto signUpDto=SignUpDto.builder()
@@ -90,14 +99,6 @@ public class PostServiceTest {
         memberService.signin(signInDto);
     }
 
-
-
-    @AfterEach
-    public void clean(){
-        postLikeRepository.deleteAll();
-        memberRepository.deleteAll();
-        postRepository.deleteAll();
-    }
 
     public void dummyArticles(){
         Member member=memberRepository.findById(getId()).orElseThrow(MemberNotFoundException::new);

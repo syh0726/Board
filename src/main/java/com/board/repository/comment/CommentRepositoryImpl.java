@@ -23,6 +23,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
         return  jpaQueryFactory.selectFrom(QComment.comment)
                     .leftJoin(QComment.comment.member, QMember.member)
                     .where(QPost.post.eq(post))
+                    .orderBy(QComment.comment.id.asc())
                     .fetchJoin()
                     .distinct()
                     .fetch();

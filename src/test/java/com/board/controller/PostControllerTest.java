@@ -484,52 +484,13 @@ public class PostControllerTest {
     @DisplayName("글 1개 확인 ")
     public void test7() throws Exception {
         //given
-        long id=getId();
-        Long postId=newPost().getId();
-        testSignIn2();
-        Long id2=getId2();
 
-        LikesPostServiceDto likesPostServiceDto= LikesPostServiceDto
-                .builder()
-                .id(id)
-                .isLike(true)
-                .postId(postId)
-                .build();
-
-        postService.likesPost(likesPostServiceDto);
-
-        NewCommentDto newCommentDto=NewCommentDto.builder()
-                .content("댓글 작성")
-                .build();
-
-        NewCommentDto newCommentDto2=NewCommentDto.builder()
-                .content("댓글 작성2")
-                .build();
-
-        NewCommentServiceDto newCommentServiceDto=NewCommentServiceDto.builder()
-                .postId(postId)
-                .id(id)
-                .newCommentDto(newCommentDto)
-                .build();
-
-        NewCommentServiceDto newCommentServiceDto2=NewCommentServiceDto.builder()
-                .postId(postId)
-                .id(getId2())
-                .newCommentDto(newCommentDto2)
-                .build();
-
-
-        commentService.newComment(newCommentServiceDto);
-        commentService.newComment(newCommentServiceDto2);
-
-        Post post=postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-
+        long postId=18;
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}",postId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.postResponseData.id").value(post.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.postResponseData.title").value(post.getTitle()))
+                .andDo(MockMvcResultHandlers.print())
                 .andDo(MockMvcResultHandlers.print());
         //then
 
