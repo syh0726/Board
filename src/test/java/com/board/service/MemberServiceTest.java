@@ -36,6 +36,7 @@ class MemberServiceTest {
     @Autowired
     PostRepository postRepository;
 
+    /*
     @AfterEach
     void clean(){memberRepository.deleteAll();}
 
@@ -56,7 +57,7 @@ class MemberServiceTest {
                 .build();
 
         memberService.signin(signInDto);
-    }
+    }*/
 
 
     public Member testSignIn(){

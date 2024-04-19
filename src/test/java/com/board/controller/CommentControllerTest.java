@@ -64,7 +64,7 @@ public class CommentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
+    /*@BeforeEach
     public void SignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -89,7 +89,7 @@ public class CommentControllerTest {
         sessionRepository.deleteAll();
         postRepository.deleteAll();
         commentRepository.deleteAll();
-    }
+    }*/
 
     public Long getId(){
         Member member=memberRepository.findByEmail("test@gmail.com");
