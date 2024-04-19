@@ -75,6 +75,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
                 ,QPost.post.createdAt)
                 .from(QPost.post)
                 .where(QPost.post.member.id.eq(id))
+                .orderBy(QPost.post.id.desc())
                 .fetch();
 
         String nickName=jpaQueryFactory.select(QMember.member.nickName)

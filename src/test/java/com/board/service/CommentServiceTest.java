@@ -20,11 +20,14 @@ import com.board.requestServiceDto.Post.NewPostServiceDto;
 import com.board.requestServiceDto.comment.DeleteCommentServiceDto;
 import com.board.requestServiceDto.comment.EditCommentServiceDto;
 import com.board.requestServiceDto.comment.NewCommentServiceDto;
+import com.board.responseDto.member.GetActivictyResponseDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
 public class CommentServiceTest {
@@ -59,7 +62,7 @@ public class CommentServiceTest {
     MemberSession memberSession=new MemberSession(1L,"aa");
 
 
-   /* @BeforeEach
+    @BeforeEach
     public void testSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -83,7 +86,7 @@ public class CommentServiceTest {
         commentRepository.deleteAll();
         memberRepository.deleteAll();
         postRepository.deleteAll();
-    }*/
+    }
 
 
     public Long getId(){
@@ -114,7 +117,7 @@ public class CommentServiceTest {
         memberService.signin(signInDto);
 
     }
-    public Post newPost(){
+    public Long newPost(){
         Long id=getId();
 
         NewPostDto postDto=NewPostDto.builder()
@@ -128,14 +131,19 @@ public class CommentServiceTest {
                 .id(id)
                 .build();
 
-        return postRepository.getPostById(1L);
+        postService.newPost(newPostServiceDto);
+
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return postId;
     }
 
     @Test
     @DisplayName("댓글 달기 서비스")
     public void test1(){
         Long Id=getId();
-        Post post=newPost();
+        Long postId=newPost();
 
         NewCommentDto newCommentDto=NewCommentDto.builder()
                         .content("댓글달기1")
@@ -143,8 +151,8 @@ public class CommentServiceTest {
 
         NewCommentServiceDto newCommentServiceDto= NewCommentServiceDto.builder()
                 .newCommentDto(newCommentDto)
-                .id(memberSession.id)
-                .postId(post.getId())
+                .id(Id)
+                .postId(postId)
                 .build();
 
         Comment comment=commentService.newComment(newCommentServiceDto);
@@ -157,7 +165,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 수정 서비스")
     public void test2(){
         Long id=getId();
-        Post post=newPost();
+        Long postId=newPost();
 
         NewCommentDto newCommentDto=NewCommentDto.builder()
                 .content("댓글달기1")
@@ -166,7 +174,7 @@ public class CommentServiceTest {
         NewCommentServiceDto newCommentServiceDto= NewCommentServiceDto.builder()
                 .newCommentDto(newCommentDto)
                 .id(id)
-                .postId(post.getId())
+                .postId(postId)
                 .build();
 
         Comment comment=commentService.newComment(newCommentServiceDto);
@@ -193,7 +201,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 삭제 서비스")
     public void test3(){
         Long id=getId();
-        Post post=newPost();
+        Long postId=newPost();
         testSignIn2();
         Long id2=getId2();
 
@@ -204,7 +212,7 @@ public class CommentServiceTest {
         NewCommentServiceDto newCommentServiceDto= NewCommentServiceDto.builder()
                 .newCommentDto(newCommentDto)
                 .id(id)
-                .postId(post.getId())
+                .postId(postId)
                 .build();
 
         Comment comment=commentService.newComment(newCommentServiceDto);

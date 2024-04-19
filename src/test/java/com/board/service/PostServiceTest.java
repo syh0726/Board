@@ -3,6 +3,7 @@ package com.board.service;
 import com.board.domain.member.Member;
 import com.board.domain.member.Role;
 import com.board.domain.post.Post;
+import com.board.exception.post.like.PostAlreadyLikesException;
 import com.board.repository.member.MemberRepository;
 import com.board.requestServiceDto.Post.*;
 import com.board.responseDto.Post.PostsResponseDto;
@@ -20,11 +21,14 @@ import com.board.requestDto.member.SignUpDto;
 import com.board.requestDto.post.EditPostDto;
 import com.board.requestDto.post.GetPostsDto;
 import com.board.requestDto.post.NewPostDto;
+import com.board.responseDto.member.GetActivictyResponseDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
 public class PostServiceTest {
@@ -53,7 +57,7 @@ public class PostServiceTest {
     @Autowired
     PostLikeRepository postLikeRepository;
 
-    /*@BeforeEach
+    @BeforeEach
     public void testSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -78,7 +82,7 @@ public class PostServiceTest {
         postLikeRepository.deleteAll();
         memberRepository.deleteAll();
         postRepository.deleteAll();
-    }*/
+    }
 
 
     public void testSignIn2(){
@@ -139,23 +143,24 @@ public class PostServiceTest {
         return member.getId();
     }
 
-    public Post newPost(){
-        Long id=getId();
-
-        NewPostDto postDto=NewPostDto.builder()
-                .title("test제목")
-                .content("test내용")
+    public Long newPost(){
+        NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
+                .title("안녕하세요")
+                .content("테스트테스트테스트")
                 .build();
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(postDto)
-                .id(id)
+                .newPostDto(testPost)
+                .id(getId())
                 .build();
 
-        return postRepository.getPostById(1L);
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return id;
     }
-    public Post newPost2(){
+    public Long newPost2(){
         Long id=getId();
 
         NewPostDto postDto=NewPostDto.builder()
@@ -169,7 +174,10 @@ public class PostServiceTest {
                 .id(id)
                 .build();
 
-        return postRepository.getPostById(2L);
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return postId;
     }
 
 
@@ -177,20 +185,12 @@ public class PostServiceTest {
     @DisplayName("글 작성 서비스")
     public void test1(){
         //given
-        NewPostDto newPostDto =newArticle();
-        Long id =getId();
-        NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .id(id)
-                .newPostDto(newPostDto)
-                .build();
-        //when
-        Post post =postRepository.getPostById(1L);
-
+        Long postId=newPost();
         //then
-        Post resultPost=postRepository.getPostById(post.getId());
+        Post resultPost=postRepository.getPostById(postId);
 
         Assertions.assertEquals(1L,postRepository.count());
-        Assertions.assertEquals("테스트테스트테스트",post.getContent());
+        Assertions.assertEquals("테스트테스트테스트",resultPost.getContent());
         Assertions.assertEquals("자유",resultPost.getCategory().getCategoryName().getCategory());
     }
 
@@ -222,7 +222,7 @@ public class PostServiceTest {
     @DisplayName("글 수정 서비스")
     public void test3(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
 
         EditPostDto editPostDto=EditPostDto.builder()
@@ -234,13 +234,13 @@ public class PostServiceTest {
 
         EditPostServiceDto editPostServiceDto= EditPostServiceDto.builder()
                 .editPostDto(editPostDto)
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .build();
         //when
         postService.editPost(editPostServiceDto);
         //then
-        Post resultPost=postRepository.findById(post.getId()).orElseThrow(PostNotFoundException::new);
+        Post resultPost=postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         Assertions.assertEquals("제목 수정",resultPost.getTitle());
         Assertions.assertEquals("내용 수정",resultPost.getContent());
     }
@@ -250,38 +250,39 @@ public class PostServiceTest {
     @DisplayName("글 좋아요 실패 중복 추천!")
     public void test4(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
 
         LikesPostServiceDto likesPostServiceDto=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .isLike(true)
                 .build();
 
         //when
         postService.likesPost(likesPostServiceDto);
-        postService.likesPost(likesPostServiceDto);
+        Assertions.assertThrows(PostAlreadyLikesException.class,()->{postService.likesPost(likesPostServiceDto);});
         //then
-        Assertions.assertEquals(2L,postLikeRepository.count());
+        Assertions.assertEquals(1L,postLikeRepository.count());
     }
 
     @Test
     @DisplayName("글 좋아요 다른글 성공!!")
     public void test5(){
         //given
-        Post post=newPost();
-        Post post2=newPost2();
+        Long postId=newPost();
+
+        Long postId2=newPost2();
         Long id=getId();
 
 
         LikesPostServiceDto likesPostServiceDto=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .isLike(true)
                 .build();
         LikesPostServiceDto likesPostServiceDto2=LikesPostServiceDto.builder()
-                .postId(post2.getId())
+                .postId(postId2)
                 .isLike(true)
                 .id(id)
                 .build();
@@ -290,7 +291,7 @@ public class PostServiceTest {
         postService.likesPost(likesPostServiceDto);
         postService.likesPost(likesPostServiceDto2);
         //then
-        int likesNum=postRepository.getLikesNum(post.getId());
+        int likesNum=postRepository.getLikesNum(postId);
         Assertions.assertEquals(1,likesNum);
     }
 
@@ -299,19 +300,20 @@ public class PostServiceTest {
     @DisplayName("글 좋아요 다른 아이디 서비스 성공")
     public void test6(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
+
         Long id=getId();
         testSignIn2();
         Long id2=getId2();
 
         LikesPostServiceDto likesPostServiceDto=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .isLike(true)
                 .build();
 
         LikesPostServiceDto likesPostServiceDto2=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id2)
                 .isLike(false)
                 .build();
@@ -328,11 +330,11 @@ public class PostServiceTest {
     @DisplayName("글 수정 서비스 :관리자 ")
     public void test7(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
         testSignIn2();
         Long id2=getId2();
-        Post post2=newPost2();
+        Long postId2=newPost2();
 
         Member member=memberRepository.findById(id2).orElseThrow(MemberNotFoundException::new);
         member.setRole(Role.ADMIN);
@@ -346,14 +348,14 @@ public class PostServiceTest {
 
         EditPostServiceDto editPostServiceDto= EditPostServiceDto.builder()
                 .editPostDto(editPostDto)
-                .postId(post.getId())
+                .postId(postId)
                 .id(id2)
                 .build();
         //when
         postService.editPost(editPostServiceDto);
         //then
-        Post resultPost=postRepository.getPostById(post.getId());
-        Post resultPost2=postRepository.getPostById(post2.getId());
+        Post resultPost=postRepository.getPostById(postId);
+        Post resultPost2=postRepository.getPostById(postId2);
         Assertions.assertEquals("제목 수정",resultPost.getTitle());
         Assertions.assertEquals("내용 수정",resultPost.getContent());
         Assertions.assertEquals("거래",resultPost.getCategory().getCategoryName().getCategory());
@@ -364,11 +366,11 @@ public class PostServiceTest {
     @DisplayName("글 삭제 서비스  ")
     public void test8(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
 
         DeletePostServiceDto deletePostServiceDto= DeletePostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .build();
 
@@ -381,13 +383,13 @@ public class PostServiceTest {
     @DisplayName("글 삭제 서비스 권한없음 exception  ")
     public void test9(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
         testSignIn2();
         Long id2=getId2();
 
         DeletePostServiceDto deletePostServiceDto= DeletePostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id2)
                 .build();
 
@@ -400,7 +402,7 @@ public class PostServiceTest {
     @DisplayName("글 삭제 서비스 관리자 성공~  ")
     public void test10(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
         testSignIn2();
         Long id2=getId2();
@@ -411,7 +413,7 @@ public class PostServiceTest {
         memberRepository.save(member);
 
         DeletePostServiceDto deletePostServiceDto= DeletePostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id2)
                 .build();
 
@@ -426,20 +428,20 @@ public class PostServiceTest {
     @DisplayName("글 1개 조회수 늘어나는지 확인")
     public void test11(){
         //given
-        Post post=newPost();
+        Long postId=newPost();
         Long id=getId();
         testSignIn2();
         Long id2=getId2();
 
 
         LikesPostServiceDto likesPostServiceDto=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id)
                 .isLike(true)
                 .build();
 
         LikesPostServiceDto likesPostServiceDto2=LikesPostServiceDto.builder()
-                .postId(post.getId())
+                .postId(postId)
                 .id(id2)
                 .isLike(false)
                 .build();
@@ -447,24 +449,14 @@ public class PostServiceTest {
         //when
         postService.likesPost(likesPostServiceDto);
         postService.likesPost(likesPostServiceDto2);
-        postService.getPost(post.getId());
-        postService.getPost(post.getId());
+        postService.getPost(postId);
+        postService.getPost(postId);
         //then
-        Assertions.assertEquals(2,postRepository.findById(post.getId()).orElseThrow(PostNotFoundException::new).getViewCnt());
+        Assertions.assertEquals(2,postRepository.findById(postId).orElseThrow(PostNotFoundException::new).getViewCnt());
     }
 
 
 
 
-    @Test
-    @DisplayName("간단테스트")
-    public void test111() {
-        Post post=newPost();
-        Post post2=newPost();
-        CategoryName categoryName = CategoryName.valueOf("FREE");
-        Category category=categoryRepository.findByCategoryName(categoryName);
-        System.out.println("2 "+category.toString());
-        System.out.println("3 "+categoryRepository.count());
 
-    }
 }

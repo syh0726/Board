@@ -1,8 +1,11 @@
 package com.board.docs;
 
+import com.board.domain.auth.Session;
 import com.board.domain.member.Member;
 import com.board.domain.post.Post;
+import com.board.exception.member.MemberNotFoundException;
 import com.board.repository.member.MemberRepository;
+import com.board.responseDto.member.GetActivictyResponseDto;
 import com.board.service.CommentService;
 import com.board.service.PostService;
 import com.board.domain.comment.Comment;
@@ -30,6 +33,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
@@ -40,6 +44,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ActiveProfiles("test")
 @AutoConfigureRestDocs
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -72,6 +77,7 @@ public class CommentControllerDocTest {
     @Autowired
     private MemberService memberService;
 
+
     @BeforeEach
     public void SignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
@@ -101,9 +107,12 @@ public class CommentControllerDocTest {
 
 
     public Cookie getCookie(){
-        Member member=memberRepository.getMemberbyId(1L);
-        String accessToken= member.getSessions().get(0).getAccessToken();
-        return new Cookie("SESSION",accessToken);
+        Member member=memberRepository.findByEmail("test@gmail.com");
+        Session session=sessionRepository.findByMember(member).orElseThrow(MemberNotFoundException::new);
+        String accessToken = session.getAccessToken();
+        Cookie cookie =new Cookie("SESSION",accessToken);
+
+        return cookie;
     }
 
     public long getId(){
@@ -111,19 +120,27 @@ public class CommentControllerDocTest {
         return member.getId();
     }
 
-    public Post newPost(){
-        NewPostDto testPost= NewPostDto.builder()
+    public Long newPost(){
+        Long id=getId();
+
+        NewPostDto postDto=NewPostDto.builder()
+                .title("test제목")
+                .content("test내용")
                 .category("FREE")
-                .title("안녕하세요")
-                .content("테스트테스트테스트")
                 .build();
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(testPost)
-                .id(getId())
+                .newPostDto(postDto)
+                .id(id)
                 .build();
 
-        return postRepository.getPostById(1L);
+
+        postService.newPost(newPostServiceDto);
+
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return postId;
     }
 
     public Comment newComment(Long id, Long postId){
@@ -144,9 +161,8 @@ public class CommentControllerDocTest {
     @Test
     @DisplayName("댓글 작성")
     public void test1() throws Exception {
-        Post post =newPost();
         Cookie cookie =getCookie();
-        Long postId= post.getId();
+        Long postId= newPost();
 
         NewCommentDto newCommentDto = NewCommentDto.builder()
                 .content("댓글 쓰기")
@@ -186,10 +202,10 @@ public class CommentControllerDocTest {
     @Test
     @DisplayName("댓글 수정")
     public void test2() throws Exception {
-        Post post =newPost();
+
         Long id=getId();
         Cookie cookie =getCookie();
-        Long postId= post.getId();
+        Long postId= newPost();
 
         Comment comment=newComment(id,postId);
 
@@ -234,9 +250,9 @@ public class CommentControllerDocTest {
     @Test
     @DisplayName("댓글 삭제")
     public void test3() throws Exception {
-        Post post =newPost();
+
         Cookie cookie =getCookie();
-        Long postId=post.getId();
+        Long postId=newPost();
         Long id=getId();
         Long commentId=newComment(id,postId).getId();
         newComment(id,postId);

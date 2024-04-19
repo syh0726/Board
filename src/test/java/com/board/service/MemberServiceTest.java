@@ -15,10 +15,14 @@ import com.board.requestServiceDto.Post.NewPostServiceDto;
 import com.board.requestServiceDto.member.ChangeNicknameServiceDto;
 import com.board.requestServiceDto.member.ChangePasswordServiceDto;
 import com.board.requestServiceDto.member.ChangePhoneServiceDto;
+import com.board.responseDto.Post.ActivityPostList;
+import com.board.responseDto.member.GetActivictyResponseDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class MemberServiceTest {
     @Autowired
@@ -36,7 +40,7 @@ class MemberServiceTest {
     @Autowired
     PostRepository postRepository;
 
-    /*
+    static Member member;
     @AfterEach
     void clean(){memberRepository.deleteAll();}
 
@@ -57,7 +61,9 @@ class MemberServiceTest {
                 .build();
 
         memberService.signin(signInDto);
-    }*/
+
+        member=memberRepository.findByEmail("test@gmail.com");
+    }
 
 
     public Member testSignIn(){
@@ -98,6 +104,8 @@ class MemberServiceTest {
                 .id(id)
                 .build();
 
+        postService.newPost(newPostServiceDto);
+
         return postRepository.getPostById(1L);
     }
     public Post newPost2(){
@@ -114,6 +122,10 @@ class MemberServiceTest {
                 .id(id)
                 .build();
 
+
+        postService.newPost(newPostServiceDto);
+
+
         return postRepository.getPostById(1L);
     }
 
@@ -121,22 +133,9 @@ class MemberServiceTest {
     @DisplayName("회원가입 성공 비밀번호 암호화 하기 때문에 그냥 비밀번호를 넣으면 같지않음!!")
     public void test1(){
         //given
-        SignUpDto signUpDto= SignUpDto.builder()
-                .email("test@gmail.com")
-                .phoneNumber("010-1234-5678")
-                .password("1234")
-                .nickName("test")
-                .build();
-
-        //when
-        memberService.signup(signUpDto);
 
         //then
         Assertions.assertEquals(1,memberRepository.count());
-
-        Member member=memberRepository.findById(1L)
-                .orElseThrow(()->new AlreadyExistEmailException());
-
         Assertions.assertEquals("test",member.getNickName());
         Assertions.assertNotEquals("1234",member.getPassword());
     }
@@ -144,40 +143,19 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원가입 성공 비밀번호 암호화 해독")
     public void test2(){
-        //given
-        SignUpDto signUpDto= SignUpDto.builder()
-                .email("test@gmail.com")
-                .phoneNumber("010-1234-5678")
-                .password("1234")
-                .nickName("test")
-                .build();
 
-        //when
-        Member member=memberService.signup(signUpDto);
 
-        //then
         Assertions.assertEquals(1,memberRepository.count());
 
-        Member loginMember=memberRepository.findById(member.getId())
-                .orElseThrow(()->new AlreadyExistEmailException());
 
         Assertions.assertEquals("test",member.getNickName());
-        Assertions.assertTrue(passwordEncoder.matches("1234",loginMember.getPassword()));
+        Assertions.assertTrue(passwordEncoder.matches("1234",member.getPassword()));
     }
 
     @Test
     @DisplayName("로그인 성공")
     public void test3(){
         //given
-
-        Member member=Member.builder()
-                .nickName("test")
-                .password(passwordEncoder.encrypt("1234"))
-                .phoneNumber("010-1234-5678")
-                .email("test@gmail.com")
-                .build();
-
-        memberRepository.save(member);
 
         SignInDto signInDto = SignInDto.builder()
                 .email("test@gmail.com")
@@ -193,14 +171,6 @@ class MemberServiceTest {
     @DisplayName("로그인 성공 실패기 때문에 exception 발생")
     public void test4(){
         //given
-        Member member=Member.builder()
-                .nickName("test")
-                .password(passwordEncoder.encrypt("1234"))
-                .phoneNumber("010-1234-5678")
-                .email("test@gmail.com")
-                .build();
-
-        memberRepository.save(member);
 
         SignInDto signInDto = SignInDto.builder()
                 .email("test@gmail.com")
@@ -217,11 +187,10 @@ class MemberServiceTest {
     @DisplayName("비밀번호 변경")
     public void test5(){
         //given
-        Member member=testSignIn();
 
         ChangePasswordServiceDto changePasswordServiceDto= ChangePasswordServiceDto.builder()
                 .id(member.getId())
-                .originPassword("test1234")
+                .originPassword("1234")
                 .newPassWord("test0000")
                 .build();
 
@@ -230,16 +199,14 @@ class MemberServiceTest {
 
         //then
         Member member2=memberRepository.findByEmail("test@gmail.com");
-        if(passwordEncoder.matches("test0000",member2.getPassword())){
-            System.out.println("변경 성공");
-        }
+        Assertions.assertTrue(passwordEncoder.matches("test0000",member2.getPassword()));
+
     }
 
     @Test
     @DisplayName("닉네임 변경")
     public void test6(){
         //given
-        Member member=testSignIn();
 
         ChangeNicknameServiceDto changeNicknameServiceDto = ChangeNicknameServiceDto.builder()
                 .id(member.getId())
@@ -257,7 +224,6 @@ class MemberServiceTest {
     @DisplayName("휴대폰번호 변경")
     public void test7(){
         //given
-        Member member=testSignIn();
 
         ChangePhoneServiceDto changePhoneServiceDto=ChangePhoneServiceDto.builder()
                 .id(member.getId())
@@ -272,8 +238,6 @@ class MemberServiceTest {
         Assertions.assertEquals("010-1577-1577",member2.getPhoneNumber());
 
     }
-
-
 
     @Test
     @DisplayName("패스워드 찾기")
@@ -299,7 +263,9 @@ class MemberServiceTest {
 
         Long id=getId();
 
-        memberService.getActivity(id);
+        GetActivictyResponseDto activityPostList=memberService.getActivity(id);
+        Assertions.assertEquals("test제목2",activityPostList.getPostList().get(0).getTitle());
+        Assertions.assertEquals("test제목",activityPostList.getPostList().get(1).getTitle());
     }
 
 }

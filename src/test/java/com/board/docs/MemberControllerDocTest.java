@@ -1,8 +1,11 @@
 package com.board.docs;
 
 import com.board.crypto.PasswordEncoder;
+import com.board.domain.auth.Session;
 import com.board.domain.member.Member;
 import com.board.domain.post.Post;
+import com.board.exception.member.MemberNotFoundException;
+import com.board.repository.auth.SessionRepository;
 import com.board.repository.member.MemberRepository;
 import com.board.requestDto.member.*;
 import com.board.service.PostService;
@@ -13,6 +16,7 @@ import com.board.responseDto.member.GetActivictyResponseDto;
 import com.board.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.request.RequestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
@@ -34,7 +39,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -61,10 +66,14 @@ public class MemberControllerDocTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeEach
+    @Autowired
+    SessionRepository sessionRepository;
+
+    @AfterEach
     public void clean(){
         memberRepository.deleteAll();
     }
+
 
     public void SignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
@@ -85,22 +94,27 @@ public class MemberControllerDocTest {
     }
 
 
-    public Post newPost(){
-        NewPostDto testPost= NewPostDto.builder()
+    public Long newPost(){
+        Long id=getId();
+
+        NewPostDto postDto=NewPostDto.builder()
+                .title("test제목")
+                .content("test내용")
                 .category("FREE")
-                .title("안녕하세요")
-                .content("테스트테스트테스트")
                 .build();
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(testPost)
-                .id(getId())
+                .newPostDto(postDto)
+                .id(id)
                 .build();
 
-        GetActivictyResponseDto post=postService.newPost(newPostServiceDto);
-        Member member=memberRepository.findByNickname(post.getNickName());
 
-        return postRepository.getPostById(member.getId());
+        postService.newPost(newPostServiceDto);
+
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return postId;
     }
 
     public long getId(){
@@ -110,10 +124,14 @@ public class MemberControllerDocTest {
 
 
     public Cookie getCookie(){
-        Member member=memberRepository.getMemberbyId(1L);
-        String accessToken= member.getSessions().get(0).getAccessToken();
-        return new Cookie("SESSION",accessToken);
+        Member member=memberRepository.findByEmail("test@gmail.com");
+        Session session=sessionRepository.findByMember(member).orElseThrow(MemberNotFoundException::new);
+        String accessToken = session.getAccessToken();
+        Cookie cookie =new Cookie("SESSION",accessToken);
+
+        return cookie;
     }
+
 
 
     @Test

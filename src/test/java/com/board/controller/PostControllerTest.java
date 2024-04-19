@@ -2,6 +2,7 @@ package com.board.controller;
 
 import com.board.domain.member.Role;
 import com.board.domain.post.Post;
+import com.board.responseDto.member.GetActivictyResponseDto;
 import com.board.service.PostService;
 import com.board.crypto.PasswordEncoder;
 import com.board.domain.auth.Session;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -43,7 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
 public class PostControllerTest {
@@ -84,7 +86,7 @@ public class PostControllerTest {
     PostService postService;
 
 
-   /* @BeforeEach
+    @BeforeEach
     public void SignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
@@ -111,7 +113,7 @@ public class PostControllerTest {
         memberRepository.deleteAll();
         sessionRepository.deleteAll();
     }
-*/
+
     public NewPostDto newPostDto(){
         NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
@@ -124,19 +126,13 @@ public class PostControllerTest {
         Member member=memberRepository.findByEmail("test@gmail.com");
         return member.getId();
     }
-
-    public Long getId2(){
-        Member member=memberRepository.findByEmail("test2@gmail.com");
-        return member.getId();
-    }
-
     public Long getAdminId(){
         Member member=memberRepository.findByEmail("admin@gmail.com");
         return member.getId();
     }
 
 
-    public Post newPost(){
+    public Long newPost(){
         NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
                 .title("안녕하세요")
@@ -148,11 +144,12 @@ public class PostControllerTest {
                 .id(getId())
                 .build();
 
-        return postRepository.getPostById(1L);
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
 
+
+        return id;
     }
-
-
     public void adminSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("admin@gmail.com")
@@ -195,7 +192,6 @@ public class PostControllerTest {
 
 
     public void dummyArticles() {
-        Post post=newPost();
         Member member = memberRepository.findByEmail("test@gmail.com");
         Category tradeCategory = Category.builder()
                 .category("TRADE")
@@ -252,7 +248,7 @@ public class PostControllerTest {
     }
 
     public Post dummyComments() {
-        Post post=newPost();
+        Post post=postRepository.getPostById(newPost());
 
         for (int i = 1; i < 11; i++) {
             NewCommentDto newCommentDto= NewCommentDto.builder()
@@ -267,44 +263,6 @@ public class PostControllerTest {
         }
 
         return post;
-    }
-
-    public Post dummyComments2() {
-        Post post=newPost();
-
-        for (int i = 1; i < 11; i++) {
-            NewCommentDto newCommentDto= NewCommentDto.builder()
-                    .content("댓글 달기"+i)
-                    .build();
-            NewCommentServiceDto newCommentServiceDto= NewCommentServiceDto.builder()
-                    .newCommentDto(newCommentDto)
-                    .id(getId())
-                    .postId(post.getId())
-                    .build();
-            commentService.newComment(newCommentServiceDto);
-        }
-
-        return post;
-    }
-
-
-        public SignInDto testSignIn(){
-        SignUpDto signUpDto=SignUpDto.builder()
-                .email("test@gmail.com")
-                .phoneNumber("01012341234")
-                .nickName("test")
-                .password("1234")
-                .build();
-
-        memberService.signup(signUpDto);
-
-        SignInDto signInDto= SignInDto.builder()
-                .email("test@gmail.com")
-                .password("1234")
-                .build();
-
-        memberService.signin(signInDto);
-        return signInDto;
     }
 
     public Cookie getCookie(){
@@ -411,7 +369,7 @@ public class PostControllerTest {
     @DisplayName("글 삭제 ")
     public void test4() throws Exception {
         //given
-        Long postId=newPost().getId();
+        Long postId=newPost();
         Cookie cookie=getCookie();
         //when
         mockMvc.perform(MockMvcRequestBuilders.delete("/posts/{postId}",postId)
@@ -429,7 +387,7 @@ public class PostControllerTest {
     @DisplayName("글 삭제 관리자 ID ")
     public void test5() throws Exception {
         //given
-        Long postId=newPost().getId();
+        Long postId=newPost();
         adminSignIn();
         Member member=getAdmin();
 
@@ -451,7 +409,7 @@ public class PostControllerTest {
     @DisplayName("글 수정 관리자 ID ")
     public void test6() throws Exception {
         //given
-        Long postId=newPost().getId();
+        Long postId=newPost();
         adminSignIn();
 
         Member member=getAdmin();
@@ -484,8 +442,8 @@ public class PostControllerTest {
     @DisplayName("글 1개 확인 ")
     public void test7() throws Exception {
         //given
+        Long postId= newPost();
 
-        long postId=18;
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}",postId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -500,8 +458,7 @@ public class PostControllerTest {
     @DisplayName("글 추천 ")
     public void test8() throws Exception {
         //given
-        Post post=newPost();
-        long postId=post.getId();
+        long postId=newPost();
 
         Cookie cookie=getCookie();
 
@@ -521,8 +478,7 @@ public class PostControllerTest {
     @DisplayName("글 비추천 ")
     public void test9() throws Exception {
         //given
-        Post post=newPost();
-        long postId=post.getId();
+        long postId=newPost();
 
         Cookie cookie=getCookie();
 
@@ -566,7 +522,7 @@ public class PostControllerTest {
     }
 
 
-    @Test
+  /*  @Test
     @DisplayName("데이터 변환 속도 비교")
     public void CompareData() throws Exception {
         //given
@@ -632,6 +588,6 @@ public class PostControllerTest {
 
         //then
     }
-
+*/
 
 }

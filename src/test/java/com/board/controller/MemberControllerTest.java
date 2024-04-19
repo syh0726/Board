@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 class MemberControllerTest {
@@ -53,10 +55,10 @@ class MemberControllerTest {
 
     @Autowired
     PostRepository postRepository;
-/*
+
     @AfterEach
     public void clean(){memberRepository.deleteAll();}
-*/
+
 
     public Cookie getCookie(){
         Member test=memberRepository.findByEmail("test@gmail.com");
@@ -87,16 +89,14 @@ class MemberControllerTest {
     @Test
     @DisplayName("로그인 성공후 세션 1개 생성 응답값을 보면 쿠키에 세션값이 담긴것도 확인 가능")
     public void test1() throws Exception {
-       String encryptedpass= passwordEncoder.encrypt("1234");
-
-        Member member=Member.builder()
+        SignUpDto signUpDto=SignUpDto.builder()
                 .email("test@gmail.com")
-                .phoneNumber("01012341234")
+                .phoneNumber("01012345678")
                 .nickName("test")
-                .password(encryptedpass)
+                .password("test1234")
                 .build();
 
-        memberRepository.save(member);
+        memberService.signup(signUpDto);
 
         SignInDto signInDto= SignInDto.builder()
                 .email("test@gmail.com")
@@ -228,6 +228,7 @@ class MemberControllerTest {
     @DisplayName("유저 게시글 목록 불러오기")
     public void test8() throws Exception{
         SignIn();
+        Member member=memberRepository.findByEmail("test@gmail.com");
 
         NewPostDto postDto=NewPostDto.builder()
                 .title("test제목")
@@ -237,13 +238,13 @@ class MemberControllerTest {
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
                 .newPostDto(postDto)
-                .id(1L)
+                .id(member.getId())
                 .build();
 
         postService.newPost(newPostServiceDto);
         postService.newPost(newPostServiceDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/member/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/{id}",member.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -266,7 +267,7 @@ class MemberControllerTest {
                         .content(json))
                 .andDo(MockMvcResultHandlers.print());
 
-        Assertions.assertEquals(1L,memberRepository.count());
+        Assertions.assertEquals(0L,memberRepository.count());
 
     }
 
