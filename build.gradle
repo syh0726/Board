@@ -71,7 +71,7 @@ test {
 /*
 test {
     outputs.dir snippetsDir
-}*/
+}
 
 asciidoctor {
     inputs.dir snippetsDir
@@ -84,5 +84,5 @@ bootJar {
         from asciidoctor.outputDir          //여기를 복사해서
         into "src/main/resources/static/docs"  //여기로 넣어라
     }
-}
+}*/
 
