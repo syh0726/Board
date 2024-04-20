@@ -64,13 +64,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-/*test {
+test {
     useJUnitPlatform()
-}*/
+}
 
+/*
 test {
     outputs.dir snippetsDir
-}
+}*/
 
 asciidoctor {
     inputs.dir snippetsDir
