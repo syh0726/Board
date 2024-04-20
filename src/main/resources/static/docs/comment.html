@@ -492,12 +492,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/1/comments HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/81/comments HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 27
 Host: localhost:8080
-Cookie: SESSION=1ef134f4-7c90-469a-abe4-5a9c7712cddd
+Cookie: SESSION=c8a2cfba-e1fe-4385-a9a6-193a57c112df
 
 {"content":"댓글 쓰기"}</code></pre>
 </div>
@@ -593,10 +593,13 @@ Cookie: SESSION=1ef134f4-7c90-469a-abe4-5a9c7712cddd
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 120
+Content-Length: 121
 
-{"commentListItems":[{"id":1,"content":"댓글 쓰기","nickName":"test","createdAt":"01-30 18:12:34"}],"commentsNum":1}</code></pre>
+{"commentListItems":[{"id":14,"content":"댓글 쓰기","nickName":"test","createdAt":"04-20 20:54:17"}],"commentsNum":1}</code></pre>
 </div>
 </div>
 </div>
@@ -632,12 +635,12 @@ Content-Length: 120
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /posts/1/comments/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /posts/83/comments/15 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 27
 Host: localhost:8080
-Cookie: SESSION=daa39c19-e340-4ee4-a6bf-a62485ca8de5
+Cookie: SESSION=5bca1aa7-28eb-44db-8fed-68294a737afa
 
 {"content":"댓글 수정"}</code></pre>
 </div>
@@ -733,10 +736,13 @@ Cookie: SESSION=daa39c19-e340-4ee4-a6bf-a62485ca8de5
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 120
+Content-Length: 121
 
-{"commentListItems":[{"id":1,"content":"댓글 수정","nickName":"test","createdAt":"01-30 18:10:34"}],"commentsNum":1}</code></pre>
+{"commentListItems":[{"id":15,"content":"댓글 수정","nickName":"test","createdAt":"04-20 20:54:17"}],"commentsNum":1}</code></pre>
 </div>
 </div>
 </div>
@@ -772,11 +778,11 @@ Content-Length: 120
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /posts/1/comments/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /posts/85/comments/16 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=56d8e376-29b8-4c57-884f-88317761c44c</code></pre>
+Cookie: SESSION=8f476ab7-a6d3-4b40-a532-0e7f03619ccc</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">

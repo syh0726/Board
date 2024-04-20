@@ -506,7 +506,7 @@ Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 85
 Host: localhost:8080
-Cookie: SESSION=83580a79-8137-426f-95ca-bf258fba4689
+Cookie: SESSION=1a9f2c15-a0ad-4ab0-a293-d9850181c8fa
 
 {"title":"안녕하세요","content":"테스트테스트테스트","category":"FREE"}</code></pre>
 </div>
@@ -589,12 +589,12 @@ Cookie: SESSION=83580a79-8137-426f-95ca-bf258fba4689
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /posts/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /posts/93 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 70
 Host: localhost:8080
-Cookie: SESSION=078f47bd-75f9-42fe-80ad-dabdc97e5230
+Cookie: SESSION=3560063a-df9b-4300-8242-81ce435b4ac1
 
 {"title":"제목 수정","content":"내용 수정","category":"TRADE"}</code></pre>
 </div>
@@ -677,11 +677,11 @@ Cookie: SESSION=078f47bd-75f9-42fe-80ad-dabdc97e5230
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /posts/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /posts/94 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=e6eb9af6-b051-4920-8d2c-ce5f79ba0643</code></pre>
+Cookie: SESSION=b0695fba-3d09-47c2-becd-c4ba14fd2dd6</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -731,11 +731,11 @@ Cookie: SESSION=e6eb9af6-b051-4920-8d2c-ce5f79ba0643</code></pre>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/1/like HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/95/like HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=d0adec63-42f7-4f65-a185-ea2e62152f84</code></pre>
+Cookie: SESSION=9a97b5c6-6949-4b35-ab9c-499a8b963ee6</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -783,6 +783,9 @@ Cookie: SESSION=d0adec63-42f7-4f65-a185-ea2e62152f84</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 13
 
@@ -818,11 +821,11 @@ Content-Length: 13
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/1/dislike HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /posts/96/dislike HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=30845191-b5dd-4de8-ab7c-c05dfef334d0</code></pre>
+Cookie: SESSION=e2598310-227f-4cd8-b89b-a65d89ca1c53</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -870,6 +873,9 @@ Cookie: SESSION=30845191-b5dd-4de8-ab7c-c05dfef334d0</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 13
 
@@ -905,7 +911,7 @@ Content-Length: 13
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /posts/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /posts/97 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080</code></pre>
@@ -1008,10 +1014,13 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 350
+Content-Length: 353
 
-{"postResponseData":{"id":1,"authorId":1,"title":"안녕하세요","content":"테스트테스트테스트","category":"자유","nickName":"test","createdAt":"2024-02-07 20:48:46","viewCnt":1,"likeCnt":1},"commentListResponseDto":{"commentListItems":[{"id":1,"content":"댓글 작성","nickName":"test","createdAt":"02-07 20:48:46"}],"commentsNum":1}}</code></pre>
+{"postResponseData":{"id":97,"authorId":41,"title":"안녕하세요","content":"테스트테스트테스트","category":"자유","nickName":"test","createdAt":"2024-04-20 20:54:19","viewCnt":1,"likeCnt":1},"commentListResponseDto":{"commentListItems":[{"id":18,"content":"댓글 작성","nickName":"test","createdAt":"04-20 20:54:19"}],"commentsNum":1}}</code></pre>
 </div>
 </div>
 </div>
@@ -1124,10 +1133,13 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 1189
+Content-Length: 1199
 
-{"postListItems":[{"id":65,"title":"안녕하세요","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":10,"likeCnt":1},{"id":62,"title":"제목20","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":59,"title":"제목19","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":56,"title":"제목18","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":53,"title":"제목17","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":50,"title":"제목16","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":47,"title":"제목15","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":44,"title":"제목14","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":41,"title":"제목13","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":38,"title":"제목12","createdAt":"01-26 00:45:11","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0}],"maxPage":3}</code></pre>
+{"postListItems":[{"id":161,"title":"안녕하세요","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":10,"likeCnt":1},{"id":158,"title":"제목20","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":155,"title":"제목19","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":152,"title":"제목18","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":149,"title":"제목17","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":146,"title":"제목16","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":143,"title":"제목15","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":140,"title":"제목14","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":137,"title":"제목13","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":134,"title":"제목12","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0}],"maxPage":3}</code></pre>
 </div>
 </div>
 </div>
@@ -1239,10 +1251,13 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 1181
+Content-Length: 1191
 
-{"postListItems":[{"id":59,"title":"제목19","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":56,"title":"제목18","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":53,"title":"제목17","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":50,"title":"제목16","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":47,"title":"제목15","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":44,"title":"제목14","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":41,"title":"제목13","createdAt":"01-26 00:45:12","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":38,"title":"제목12","createdAt":"01-26 00:45:11","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":35,"title":"제목11","createdAt":"01-26 00:45:11","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":32,"title":"제목10","createdAt":"01-26 00:45:11","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0}],"maxPage":2}</code></pre>
+{"postListItems":[{"id":155,"title":"제목19","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":152,"title":"제목18","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":149,"title":"제목17","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":146,"title":"제목16","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":143,"title":"제목15","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":140,"title":"제목14","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":137,"title":"제목13","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":134,"title":"제목12","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":131,"title":"제목11","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0},{"id":128,"title":"제목10","createdAt":"04-20 20:54:19","nickName":"test","viewCnt":0,"commentNum":0,"likeCnt":0}],"maxPage":2}</code></pre>
 </div>
 </div>
 </div>

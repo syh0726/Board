@@ -645,11 +645,14 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: SESSION=6f5375a8-3263-4ad7-8f5a-389679eb3603; Path=/; Domain=localhost; Max-Age=2592000; Expires=Thu, 29 Feb 2024 08:48:33 GMT; Secure; HttpOnly; SameSite=None
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: SESSION=ed928bb7-ac0a-4db9-8947-209cf9d46ed4; Path=/; Domain=community-board.store; Max-Age=2592000; Expires=Mon, 20 May 2024 11:54:18 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
-Content-Length: 45
+Content-Length: 46
 
-{"id":1,"nickName":"test","role":"사용자"}</code></pre>
+{"id":29,"nickName":"test","role":"사용자"}</code></pre>
 </div>
 </div>
 </div>
@@ -681,7 +684,7 @@ Content-Length: 45
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /member/1 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /member/35 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080</code></pre>
@@ -734,10 +737,13 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 236
+Content-Length: 416
 
-{"nickName":"test","postList":[{"postId":1,"title":"안녕하세요","createdAt":"02-07 19:40:37"},{"postId":2,"title":"안녕하세요","createdAt":"02-07 19:40:38"},{"postId":3,"title":"안녕하세요","createdAt":"02-07 19:40:38"}]}</code></pre>
+{"nickName":"test","postList":[{"postId":91,"title":"test제목","createdAt":"04-20 20:54:18"},{"postId":90,"title":"test제목","createdAt":"04-20 20:54:18"},{"postId":89,"title":"test제목","createdAt":"04-20 20:54:18"},{"postId":88,"title":"test제목","createdAt":"04-20 20:54:18"},{"postId":87,"title":"test제목","createdAt":"04-20 20:54:18"},{"postId":86,"title":"test제목","createdAt":"04-20 20:54:18"}]}</code></pre>
 </div>
 </div>
 </div>
@@ -753,7 +759,7 @@ Content-Length: 236
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /auth/logout HTTP/1.1
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=83fa8a11-8dd9-418c-939f-cf1123027d79
+Cookie: SESSION=f703260b-c3fb-4b30-9aae-8c4153afe70e
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
@@ -799,7 +805,10 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: SESSION=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None</code></pre>
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Set-Cookie: SESSION=; Path=/; Domain=community-board.store; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly; SameSite=None</code></pre>
 </div>
 </div>
 </div>
@@ -816,7 +825,7 @@ Set-Cookie: SESSION=; Path=/; Domain=localhost; Max-Age=0; Expires=Thu, 1 Jan 19
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Host: localhost:8080
-Cookie: SESSION=e351bdbc-c3bb-42de-9ba4-95cfb5c34c77</code></pre>
+Cookie: SESSION=107ba5e3-47cf-4592-a0ec-76ff4b97a061</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -874,6 +883,9 @@ Cookie: SESSION=e351bdbc-c3bb-42de-9ba4-95cfb5c34c77</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 72
 
@@ -895,7 +907,7 @@ Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 54
 Host: localhost:8080
-Cookie: SESSION=ee0ce066-a270-4979-ac0f-6132b2435fc6
+Cookie: SESSION=11bd9165-dc55-4684-be03-0e1174435b07
 
 {"originPassword":"test1234","newPassword":"test0000"}</code></pre>
 </div>
@@ -959,7 +971,7 @@ Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 24
 Host: localhost:8080
-Cookie: SESSION=18cfc1e3-04c5-4af4-87b2-1d1071f12595
+Cookie: SESSION=f935f41d-93a8-4471-bcca-784c17e9fed2
 
 {"nickName":"끼돌이"}</code></pre>
 </div>
@@ -1018,7 +1030,7 @@ Content-Type: application/json;charset=UTF-8
 Accept: application/json
 Content-Length: 31
 Host: localhost:8080
-Cookie: SESSION=57dca357-0b25-47ee-bd30-d4f69ffccfe0
+Cookie: SESSION=8dc689b0-f9bc-4cb3-bf61-11efa816da24
 
 {"phoneNumber":"010-1111-2222"}</code></pre>
 </div>

@@ -455,8 +455,12 @@ public class PostServiceTest {
         Assertions.assertEquals(2,postRepository.findById(postId).orElseThrow(PostNotFoundException::new).getViewCnt());
     }
 
-
-
-
-
+    @Test
+    @DisplayName("CI실패")
+    public void test111(){
+        int x=1;
+        int y=2;
+        Assertions.assertEquals(2,x+y);
+    }
+    
 }
