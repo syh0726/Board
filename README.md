@@ -1,27 +1,27 @@
 개발 진행 과정을 블로그에 순서대로 정리하였습니다.
 
 # 개발 환경
-Spring boot 3.02
-Intelij
-Gradle
-Java jdk17
-Vue.js
-Mysql
-Nginx
-Tomcat
-Yml
-Aws
-S3
-Elb
+Spring boot 3.02  
+Intelij  
+Gradle  
+Java jdk17  
+Vue.js  
+Mysql  
+Nginx  
+Tomcat  
+Yml  
+Aws  
+S3  
+Elb  
 
 # 기술
-Spring Data Jpa
-Axios
-TypeScript
-Scrypt
-Json 
-Rest Api
-QueryDsl
+Spring Data Jpa  
+Axios  
+TypeScript  
+Scrypt  
+Json   
+Rest Api  
+QueryDsl   
 
 
 # ERD
@@ -33,23 +33,23 @@ QueryDsl
 # 현재 개발한 기능
 ## 계정 기능
 
-1.회원가입
-2.로그인 ,로그아웃 기능
-3.유저 정보 수정
-4.유저 활동 목록 불러오기 (Caffeine 캐시 사용)
+1.회원가입  
+2.로그인 ,로그아웃 기능  
+3.유저 정보 수정  
+4.유저 활동 목록 불러오기 (Caffeine 캐시 사용)  
 
 ## 게시판 기능
-1.게시글 전체 리스트 ,페이징
-2.게시글 조건 별 검색
-3.게시글 내용 확인
-4.게시글 작성, 수정, 삭제 (게시글 작성자만 가능하도록 설정!)
-5.게시글 추천, 비추천 기능
-6.이미지 업로드, 수정, 삭제 기능 (현재 로컬 환경) 
+1.게시글 전체 리스트 ,페이징  
+2.게시글 조건 별 검색  
+3.게시글 내용 확인  
+4.게시글 작성, 수정, 삭제 (게시글 작성자만 가능하도록 설정!)  
+5.게시글 추천, 비추천 기능  
+6.이미지 업로드, 수정, 삭제 기능 (현재 로컬 환경)   
 
 
 ## 댓글 기능
-1.댓글 작성
-2.댓글 수정/삭제
+1.댓글 작성  
+2.댓글 수정/삭제  
 
 
 
