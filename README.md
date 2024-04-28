@@ -7,21 +7,17 @@ Gradle
 Java jdk17  
 Vue.js  
 Mysql  
-Nginx  
-Tomcat  
 Yml  
-Aws  
-S3  
-Elb  
 
 # 기술
 Spring Data Jpa  
-Axios  
 TypeScript  
-Scrypt  
-Json   
 Rest Api  
 QueryDsl   
+Aws  
+S3  
+Elb  
+Nginx  
 
 
 # ERD
