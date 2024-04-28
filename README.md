@@ -53,8 +53,7 @@ Nginx
 https://blog.naver.com/antlfn123/223314642830
 
 # 로그인 인가 및 게시글 작성 Exception 처리
-https://blog.naver.com/antlfn123/223314642830
-
+https://blog.naver.com/antlfn123/223314664628
 # 댓글 작성 수정 삭제
 https://blog.naver.com/antlfn123/223318168982
 
