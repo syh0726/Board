@@ -24,7 +24,7 @@ Rest Api
 QueryDsl
 
 
-#ERD
+# ERD
 ![image](https://github.com/syh0726/Board/assets/66738912/1197c560-9176-4aeb-b431-28c5526cfc55)
 
 
