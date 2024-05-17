@@ -1,23 +1,21 @@
 개발 진행 과정을 블로그에 순서대로 정리하였습니다.
 
-# 개발 환경
+# 개발 & 배포 환경
 Spring boot 3.02  
 Intelij  
 Gradle  
 Java jdk17  
 Vue.js  
 Mysql  
-Yml  
+Yml
+AWS
+NGINX
 
 # 기술
 Spring Data Jpa  
 TypeScript  
 Rest Api  
-QueryDsl   
-Aws  
-S3  
-Elb  
-Nginx  
+QueryDsl     
 
 
 # ERD
