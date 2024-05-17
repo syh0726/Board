@@ -7,9 +7,9 @@ Gradle
 Java jdk17  
 Vue.js  
 Mysql  
-Yml
-AWS
-NGINX
+Yml  
+Aws  
+Nginx
 
 # 기술
 Spring Data Jpa  
