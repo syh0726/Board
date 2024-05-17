@@ -24,10 +24,16 @@ public enum ErrorCode{
     INVALID_SIGNIN_INFORMATION(400,"M004","잘못된 로그인 요청 입니다."),
     MEMBER_NOT_FOUND(404,"M005","존재하지 않는 계정입니다."),
 
+    //Image 관련 에러
+    INVALID_UPLOAD_IMAGE(400,"I001","이미지 파일이 아닙니다."),
+    IMAGE_OVER_LENGTH(400,"I002","파일 게시 갯수가 초과했습니다."),
+    IMAGE_OVER_SIZE(400,"I003","파일 이미지가 너무 큽니다."),
     //게시물 관련 에러
     POST_NOT_FOUND(404,"P001","게시글이 존재하지 않습니다."),
     POST_ALREADY_LIKES(400,"P002","이미 추천또는 비추천한 게시글입니다."),
     CATEGORY_NOT_FOUND(404,"P003","존재하지 않는 카테고리 목록입니다.");
+
+
 
     private final int status;
     private final String code;

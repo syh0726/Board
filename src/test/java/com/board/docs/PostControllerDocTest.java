@@ -42,6 +42,9 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -127,14 +130,15 @@ public class PostControllerDocTest {
                 .content("테스트테스트테스트")
                 .build();
 
+
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
                 .newPostDto(testPost)
                 .id(getId())
                 .build();
 
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
         Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
-
 
         return id;
     }

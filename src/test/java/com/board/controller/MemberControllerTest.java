@@ -26,6 +26,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 
 @ActiveProfiles("test")
@@ -241,8 +244,9 @@ class MemberControllerTest {
                 .id(member.getId())
                 .build();
 
-        postService.newPost(newPostServiceDto);
-        postService.newPost(newPostServiceDto);
+        List<String> list =new ArrayList<>();
+        postService.newPost(newPostServiceDto,list);
+        postService.newPost(newPostServiceDto,list);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/member/{id}",member.getId())
                         .contentType(MediaType.APPLICATION_JSON))

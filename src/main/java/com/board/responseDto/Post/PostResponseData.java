@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 public class PostResponseData {
@@ -18,9 +19,10 @@ public class PostResponseData {
     private final String createdAt;
     private final int viewCnt;
     private final int likeCnt;
+    private final List<String> imgUrls;
 
     @Builder
-    public PostResponseData(Long id, Long authorId, String title, String content, String category, String nickName, String createdAt, int viewCnt, int likeCnt) {
+    public PostResponseData(Long id, Long authorId, String title, String content, String category, String nickName, String createdAt, int viewCnt, int likeCnt,List<String> imgUrls) {
         this.id = id;
         this.authorId = authorId;
         this.title = title;
@@ -30,5 +32,6 @@ public class PostResponseData {
         this.createdAt = createdAt;
         this.viewCnt = viewCnt;
         this.likeCnt = likeCnt;
+        this.imgUrls=imgUrls;
     }
 }

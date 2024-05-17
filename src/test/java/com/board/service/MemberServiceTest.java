@@ -22,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ActiveProfiles("test")
 @SpringBootTest
 class MemberServiceTest {
@@ -90,23 +93,24 @@ class MemberServiceTest {
         Member member=memberRepository.findByEmail("test@gmail.com");
         return member.getId();
     }
-    public Post newPost(){
-        Long id=getId();
-
-        NewPostDto postDto=NewPostDto.builder()
-                .title("test제목")
-                .content("test내용")
+    public Long newPost(){
+        NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
+                .title("안녕하세요")
+                .content("테스트테스트테스트")
                 .build();
+
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(postDto)
-                .id(id)
+                .newPostDto(testPost)
+                .id(getId())
                 .build();
 
-        postService.newPost(newPostServiceDto);
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
+        Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
 
-        return postRepository.getPostById(1L);
+        return id;
     }
     public Post newPost2(){
         Long id=getId();
@@ -121,10 +125,8 @@ class MemberServiceTest {
                 .newPostDto(postDto)
                 .id(id)
                 .build();
-
-
-        postService.newPost(newPostServiceDto);
-
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
 
         return postRepository.getPostById(1L);
     }
@@ -133,7 +135,6 @@ class MemberServiceTest {
     @DisplayName("회원가입 성공 비밀번호 암호화 하기 때문에 그냥 비밀번호를 넣으면 같지않음!!")
     public void test1(){
         //given
-
         //then
         Assertions.assertEquals(1,memberRepository.count());
         Assertions.assertEquals("test",member.getNickName());
@@ -258,7 +259,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("유저 게시글 리스트 불러오기")
     public void test12(){
-        Post post=newPost();
+        newPost();
         Post post2=newPost2();
 
         Long id=getId();

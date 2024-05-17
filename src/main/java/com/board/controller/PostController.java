@@ -1,6 +1,7 @@
 package com.board.controller;
 
 import com.board.config.data.MemberSession;
+import com.board.domain.image.PostImage;
 import com.board.requestServiceDto.Post.*;
 import com.board.responseDto.Post.PostResponseDto;
 import com.board.responseDto.Post.PostsResponseDto;
@@ -9,16 +10,23 @@ import com.board.requestDto.post.EditPostDto;
 import com.board.requestDto.post.GetPostsDto;
 import com.board.requestDto.post.NewPostDto;
 import com.board.responseDto.Post.PostLikeResponseDto;
+import com.board.service.S3service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final S3service s3service;
 
     //글 리스트
     @GetMapping(value = {"/","/{category}"})
@@ -35,15 +43,22 @@ public class PostController {
 
     //글 작성
     @PostMapping("/posts/new")
-    public void newPost(@RequestBody @Valid NewPostDto newPostDto
-            , MemberSession memberSession){
+    public void newPost(@RequestPart @Valid NewPostDto newPostDto
+            , MemberSession memberSession
+            , @RequestPart(value = "files",required = false) List<MultipartFile> files) throws IOException {
 
         NewPostServiceDto newPostServiceDto = NewPostServiceDto.builder()
                 .newPostDto(newPostDto)
                 .id(memberSession.id)
                 .build();
 
-        postService.newPost(newPostServiceDto);
+        //s3에 저장하고 url 가져오기
+        List<String> listUrl=new ArrayList<>();
+        if(files!=null){
+            listUrl=s3service.saveFile(files,"raw");
+        }
+
+        postService.newPost(newPostServiceDto,listUrl);
     }
     //특정 글 불러오기
     @GetMapping("/posts/{postId}")
@@ -52,10 +67,21 @@ public class PostController {
     }
 
     //글 수정
-    @PatchMapping("/posts/{postId}")
+    @PostMapping("/posts/{postId}")
     public void postEdit(@PathVariable(name="postId") long postId,
-                         @RequestBody @Valid EditPostDto editPostDto
-                        ,MemberSession memberSession){
+                         @RequestPart @Valid EditPostDto editPostDto
+                        ,@RequestPart(value = "deleteFiles",required = false)List<String> deleteFiles
+                        ,@RequestPart(value = "files",required = false) List<MultipartFile> files
+                        ,MemberSession memberSession) throws IOException {
+
+        List<String> upLoadListUrl=new ArrayList<>();
+        if(files!=null){
+            upLoadListUrl=s3service.saveFile(files,"raw");
+        }
+
+        if(deleteFiles!=null){
+            s3service.deleteFiles(deleteFiles,"raw");
+        }
 
         EditPostServiceDto editPostServiceDto=EditPostServiceDto.builder()
                 .editPostDto(editPostDto)
@@ -63,8 +89,7 @@ public class PostController {
                 .id(memberSession.id)
                 .build();
 
-        postService.editPost(editPostServiceDto);
-
+        postService.editPost(editPostServiceDto,upLoadListUrl);
     }
 
     //글 삭제

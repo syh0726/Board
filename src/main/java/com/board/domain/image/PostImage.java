@@ -1,6 +1,6 @@
-package com.board.domain.auth;
+package com.board.domain.image;
 
-import com.board.domain.member.Member;
+import com.board.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,26 +9,26 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.UUID;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Session {
-
+public class PostImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String accessToken;
+    private String imgFileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member member;
+    private Post post;
+
+    //포스트에 이미지 추가
     @Builder
-    public Session(Member member) {
-        this.member=member;
-        this.accessToken = UUID.randomUUID().toString();
-        member.getSessions().add(this);
+    public PostImage(Post post,String imgFileName){
+        this.post=post;
+        this.imgFileName=imgFileName;
+        post.getImgUrls().add(this);
     }
+
 }

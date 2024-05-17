@@ -1,6 +1,7 @@
 package com.board.domain.post;
 
 import com.board.domain.category.Category;
+import com.board.domain.image.PostImage;
 import com.board.domain.member.Member;
 import com.board.responseDto.Post.PostResponseData;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -15,6 +16,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,12 +28,10 @@ public class Post {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
@@ -46,6 +47,9 @@ public class Post {
 
     @NotNull
     private int viewCnt;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "post",fetch = FetchType.LAZY)
+    List<PostImage> imgUrls=new ArrayList<>();
     @Builder
     public Post(String title, String content, Member member,Category category) {
         this.member = member;
@@ -63,6 +67,11 @@ public class Post {
     }
 
     public PostResponseData toPostResponseData(int likeCnt){
+        List<String> list=new ArrayList<>();
+        for(PostImage postImage : this.imgUrls){
+            list.add(postImage.getImgFileName());
+        }
+
         return PostResponseData.builder()
                 .createdAt(this.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .nickName(this.member.getNickName())
@@ -72,6 +81,7 @@ public class Post {
                 .id(this.id)
                 .title(this.title)
                 .authorId(this.member.getId())
+                .imgUrls(list)
                 .likeCnt(likeCnt)
                 .build();
     }

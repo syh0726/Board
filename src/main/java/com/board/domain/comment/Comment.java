@@ -31,12 +31,10 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
     private Member member;
 
     @Builder

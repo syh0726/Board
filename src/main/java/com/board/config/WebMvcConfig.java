@@ -18,8 +18,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(new AuthResolver(sessionRepository));
     }
 
-
-
     //cors설정
     @Override
     public void addCorsMappings(CorsRegistry registry){

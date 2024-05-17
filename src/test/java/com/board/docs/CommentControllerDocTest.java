@@ -36,6 +36,9 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.restdocs.cookies.CookieDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -121,26 +124,23 @@ public class CommentControllerDocTest {
     }
 
     public Long newPost(){
-        Long id=getId();
-
-        NewPostDto postDto=NewPostDto.builder()
-                .title("test제목")
-                .content("test내용")
+        NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
+                .title("안녕하세요")
+                .content("테스트테스트테스트")
                 .build();
+
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(postDto)
-                .id(id)
+                .newPostDto(testPost)
+                .id(getId())
                 .build();
 
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
+        Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
 
-        postService.newPost(newPostServiceDto);
-
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
-        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
-
-        return postId;
+        return id;
     }
 
     public Comment newComment(Long id, Long postId){

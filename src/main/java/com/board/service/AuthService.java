@@ -7,6 +7,8 @@ import java.time.Duration;
 
 @Service
 public class AuthService {
+
+    //운영땐 secure true 개발떈 false
     public ResponseCookie AcceessTokenToCookie(String accessToken){
         return ResponseCookie.from("SESSION",accessToken)
                 .sameSite("None")

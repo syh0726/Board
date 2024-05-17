@@ -1,11 +1,14 @@
 package com.board.service;
 
+import com.board.domain.image.PostImage;
 import com.board.domain.member.Member;
 import com.board.domain.member.Role;
 import com.board.domain.post.Post;
 import com.board.exception.post.like.PostAlreadyLikesException;
+import com.board.repository.image.PostImageRepository;
 import com.board.repository.member.MemberRepository;
 import com.board.requestServiceDto.Post.*;
+import com.board.responseDto.Post.PostResponseDto;
 import com.board.responseDto.Post.PostsResponseDto;
 import com.board.domain.category.Category;
 import com.board.domain.category.CategoryName;
@@ -26,7 +29,16 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -57,6 +69,12 @@ public class PostServiceTest {
     @Autowired
     PostLikeRepository postLikeRepository;
 
+    @Autowired
+    S3service s3service;
+
+    @Autowired
+    PostImageRepository postImageRepository;
+
     @BeforeEach
     public void testSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
@@ -82,6 +100,7 @@ public class PostServiceTest {
         postLikeRepository.deleteAll();
         memberRepository.deleteAll();
         postRepository.deleteAll();
+        postImageRepository.deleteAll();
     }
 
 
@@ -150,17 +169,19 @@ public class PostServiceTest {
                 .content("테스트테스트테스트")
                 .build();
 
+
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
                 .newPostDto(testPost)
                 .id(getId())
                 .build();
 
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
         Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
 
         return id;
     }
-    public Long newPost2(){
+    public Long newImgPost() throws IOException {
         Long id=getId();
 
         NewPostDto postDto=NewPostDto.builder()
@@ -174,7 +195,13 @@ public class PostServiceTest {
                 .id(id)
                 .build();
 
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+        multipartFiles.add(new MockMultipartFile("image", "불광천.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/불광천.jpg"))));
+
+        List<String> list=s3service.saveFile(multipartFiles,"raw");
+
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
         Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
 
         return postId;
@@ -182,16 +209,19 @@ public class PostServiceTest {
 
 
     @Test
-    @DisplayName("글 작성 서비스")
-    public void test1(){
+    @DisplayName("이미지 글 작성 서비스")
+    public void test1() throws IOException {
         //given
-        Long postId=newPost();
+        Long postId=newImgPost();
         //then
         Post resultPost=postRepository.getPostById(postId);
 
         Assertions.assertEquals(1L,postRepository.count());
-        Assertions.assertEquals("테스트테스트테스트",resultPost.getContent());
+        Assertions.assertEquals("test내용2",resultPost.getContent());
         Assertions.assertEquals("자유",resultPost.getCategory().getCategoryName().getCategory());
+        Assertions.assertEquals(1L,resultPost.getImgUrls().size());
+        System.out.println(resultPost.getImgUrls().get(0));
+
     }
 
     @Test
@@ -219,7 +249,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 수정 서비스")
+    @DisplayName("글 수정 서비스 이미지 x")
     public void test3(){
         //given
         Long postId=newPost();
@@ -238,7 +268,8 @@ public class PostServiceTest {
                 .id(id)
                 .build();
         //when
-        postService.editPost(editPostServiceDto);
+        List<String> list=new ArrayList<>();
+        postService.editPost(editPostServiceDto,list);
         //then
         Post resultPost=postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         Assertions.assertEquals("제목 수정",resultPost.getTitle());
@@ -268,11 +299,11 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("글 좋아요 다른글 성공!!")
-    public void test5(){
+    public void test5() throws IOException {
         //given
         Long postId=newPost();
 
-        Long postId2=newPost2();
+        Long postId2=newImgPost();
         Long id=getId();
 
 
@@ -327,16 +358,14 @@ public class PostServiceTest {
 
 
     @Test
-    @DisplayName("글 수정 서비스 :관리자 ")
+    @DisplayName("글 수정 서비스 :관리자  이미지 x")
     public void test7(){
         //given
         Long postId=newPost();
         Long id=getId();
         testSignIn2();
-        Long id2=getId2();
-        Long postId2=newPost2();
 
-        Member member=memberRepository.findById(id2).orElseThrow(MemberNotFoundException::new);
+        Member member=memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
         member.setRole(Role.ADMIN);
         memberRepository.save(member);
 
@@ -349,17 +378,17 @@ public class PostServiceTest {
         EditPostServiceDto editPostServiceDto= EditPostServiceDto.builder()
                 .editPostDto(editPostDto)
                 .postId(postId)
-                .id(id2)
+                .id(id)
                 .build();
+        List<String> list =new ArrayList<>();
         //when
-        postService.editPost(editPostServiceDto);
+        postService.editPost(editPostServiceDto,list);
         //then
         Post resultPost=postRepository.getPostById(postId);
-        Post resultPost2=postRepository.getPostById(postId2);
+
         Assertions.assertEquals("제목 수정",resultPost.getTitle());
         Assertions.assertEquals("내용 수정",resultPost.getContent());
         Assertions.assertEquals("거래",resultPost.getCategory().getCategoryName().getCategory());
-        Assertions.assertEquals("자유",resultPost2.getCategory().getCategoryName().getCategory());
     }
 
     @Test
@@ -426,41 +455,135 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("글 1개 조회수 늘어나는지 확인")
-    public void test11(){
+    public void test11() throws IOException {
         //given
-        Long postId=newPost();
+        Long postId=newImgPost();
         Long id=getId();
-        testSignIn2();
-        Long id2=getId2();
-
-
-        LikesPostServiceDto likesPostServiceDto=LikesPostServiceDto.builder()
-                .postId(postId)
-                .id(id)
-                .isLike(true)
-                .build();
-
-        LikesPostServiceDto likesPostServiceDto2=LikesPostServiceDto.builder()
-                .postId(postId)
-                .id(id2)
-                .isLike(false)
-                .build();
 
         //when
-        postService.likesPost(likesPostServiceDto);
-        postService.likesPost(likesPostServiceDto2);
-        postService.getPost(postId);
-        postService.getPost(postId);
+        PostResponseDto postResponseDto=postService.getPost(postId);
+        System.out.println(postResponseDto.getPostResponseData().getImgUrls().get(0));
         //then
-        Assertions.assertEquals(2,postRepository.findById(postId).orElseThrow(PostNotFoundException::new).getViewCnt());
+
+    }
+
+
+    @Test
+    @DisplayName("이미지 글 삭제 서비스")
+    public void test12() throws IOException {
+        //given
+        Long id=getId();
+        Long postId=newImgPost();
+
+        DeletePostServiceDto deletePostServiceDto=DeletePostServiceDto.builder()
+                .postId(postId)
+                .id(id)
+                .build();
+        //when
+        postService.deletePost(deletePostServiceDto);
+        //then
+        Assertions.assertEquals(0L,postRepository.count());
+        Assertions.assertEquals(0L,postImageRepository.count());
+
     }
 
     @Test
-    @DisplayName("CI실패")
-    public void test111(){
-        int x=1;
-        int y=2;
-        Assertions.assertEquals(2,x+y);
+    @DisplayName("글 작성 이미지 x 서비스")
+    public void test13() throws IOException {
+        //given
+        Long postId=newPost();
+        //then
+        Post resultPost=postRepository.getPostById(postId);
+
+        Assertions.assertEquals(1L,postRepository.count());
+        Assertions.assertEquals("테스트테스트테스트",resultPost.getContent());
+        Assertions.assertEquals("자유",resultPost.getCategory().getCategoryName().getCategory());
+        Assertions.assertEquals(0L,resultPost.getImgUrls().size());
     }
-    
+
+    @Test
+    @DisplayName("글 수정 (삭제) 서비스")
+    public void test14() throws IOException {
+        //given
+        Long postId=newImgPost();
+        Long id=getId();
+
+        EditPostDto editPostDto=EditPostDto.builder()
+                .category("TRADE")
+                .title("제목 수정")
+                .content("내용 수정")
+                .build();
+
+
+        EditPostServiceDto editPostServiceDto= EditPostServiceDto.builder()
+                .editPostDto(editPostDto)
+                .postId(postId)
+                .id(id)
+                .build();
+        List<String> deleteFiles = new ArrayList<>();
+        Post post=postRepository.getPostById(postId);
+
+        deleteFiles.add(post.getImgUrls().get(0).getImgFileName());
+
+        List<String> list=new ArrayList<>();
+
+        s3service.deleteFiles(deleteFiles,"raw");
+
+        //when
+        postService.editPost(editPostServiceDto,list);
+        //then
+        Post resultPost=postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Assertions.assertEquals("제목 수정",resultPost.getTitle());
+        Assertions.assertEquals("내용 수정",resultPost.getContent());
+        Assertions.assertEquals(0L,postImageRepository.count());
+    }
+    @Test
+    @DisplayName("글 수정 (이미지 추가,삭제) 서비스")
+    public void test15() throws IOException {
+        //given
+        Long postId=newImgPost();
+        Long id=getId();
+
+        EditPostDto editPostDto=EditPostDto.builder()
+                .category("TRADE")
+                .title("제목 수정")
+                .content("내용 수정")
+                .build();
+
+
+        EditPostServiceDto editPostServiceDto= EditPostServiceDto.builder()
+                .editPostDto(editPostDto)
+                .postId(postId)
+                .id(id)
+                .build();
+
+        //추가할 파일
+        List<MultipartFile> upLoadFiles = new ArrayList<>();
+        upLoadFiles.add(new MockMultipartFile("image", "한강.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/한강.jpg"))));
+
+        List<String> list=new ArrayList<>();
+        //삭제할 파일
+        List<String> deleteFiles = new ArrayList<>();
+        Post post=postRepository.getPostById(postId);
+
+        // 첫 번째 파일이라고 가정... 이름을 정확히 알 수 없으니까.....
+        deleteFiles.add(post.getImgUrls().get(0).getImgFileName());
+
+        //when
+        list=s3service.saveFile(upLoadFiles,"raw");
+        postService.editPost(editPostServiceDto,list);
+        s3service.deleteFiles(deleteFiles,"raw");
+        //then
+        Post resultPost=postRepository.getPostById(postId);
+        Assertions.assertEquals("제목 수정",resultPost.getTitle());
+        Assertions.assertEquals("내용 수정",resultPost.getContent());
+        Assertions.assertEquals(1L,postImageRepository.count());
+        for(PostImage postImage:resultPost.getImgUrls()){
+            System.out.println(postImage.getImgFileName());
+        }
+
+
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.board.repository.post;
 
+import com.board.domain.image.QPostImage;
 import com.board.domain.post.Post;
 import com.board.responseDto.Post.PostsResponseDto;
 import com.board.domain.category.CategoryName;
@@ -95,6 +96,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .leftJoin(QPost.post.member, QMember.member)
                 .fetchJoin()
                 .leftJoin(QPost.post.category, QCategory.category)
+                .fetchJoin()
+                .leftJoin(QPost.post.imgUrls, QPostImage.postImage)
                 .fetchJoin()
                 .where(QPost.post.id.eq(postId))
                 .distinct()

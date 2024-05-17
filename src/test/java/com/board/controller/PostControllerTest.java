@@ -2,6 +2,7 @@ package com.board.controller;
 
 import com.board.domain.member.Role;
 import com.board.domain.post.Post;
+import com.board.repository.image.PostImageRepository;
 import com.board.responseDto.member.GetActivictyResponseDto;
 import com.board.service.PostService;
 import com.board.crypto.PasswordEncoder;
@@ -29,19 +30,27 @@ import com.board.requestServiceDto.comment.NewCommentServiceDto;
 import com.board.responseDto.comment.CommentListItem;
 import com.board.service.CommentService;
 import com.board.service.MemberService;
+import com.board.service.S3service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +94,11 @@ public class PostControllerTest {
     @Autowired
     PostService postService;
 
+    @Autowired
+    S3service s3service;
+
+    @Autowired
+    PostImageRepository postImageRepository;
 
     @BeforeEach
     public void SignIn(){
@@ -139,17 +153,44 @@ public class PostControllerTest {
                 .content("테스트테스트테스트")
                 .build();
 
+
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
                 .newPostDto(testPost)
                 .id(getId())
                 .build();
 
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
         Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
-
 
         return id;
     }
+    public Long newImgPost() throws IOException {
+        Long id=getId();
+
+        NewPostDto postDto=NewPostDto.builder()
+                .title("test제목2")
+                .content("test내용2")
+                .category("FREE")
+                .build();
+
+        NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
+                .newPostDto(postDto)
+                .id(id)
+                .build();
+
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+        multipartFiles.add(new MockMultipartFile("image", "불광천.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/불광천.jpg"))));
+
+        List<String> list=s3service.saveFile(multipartFiles,"raw");
+
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
+        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
+
+        return postId;
+    }
+
     public void adminSignIn(){
         SignUpDto signUpDto=SignUpDto.builder()
                 .email("admin@gmail.com")
@@ -311,7 +352,6 @@ public class PostControllerTest {
         //given
         Cookie cookie=getCookie();
         NewPostDto newPostDto =newPostDto();
-
 
         String json= objectMapper.writeValueAsString(newPostDto);
         //when
@@ -519,6 +559,110 @@ public class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
         //then
+    }
+
+    @Test
+    @DisplayName("이미지 글 작성 ")
+    public void test11() throws Exception {
+        //given
+        Cookie cookie=getCookie();
+        NewPostDto newPostDto = newPostDto();
+        MockMultipartFile file=new MockMultipartFile("files", "불광천.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/불광천.jpg")));
+        MockMultipartFile file2=new MockMultipartFile("files", "불광천.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/한강.jpg")));
+
+        String json= objectMapper.writeValueAsString(newPostDto);
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/posts/new")
+                        .file(file)
+                        .file(file2)
+                        .file(new MockMultipartFile("newPostDto","","application/json",json.getBytes(StandardCharsets.UTF_8)))
+                        .cookie(cookie)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                                .accept(MediaType.APPLICATION_JSON)
+                        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        Assertions.assertEquals(1L,postRepository.count());
+        Assertions.assertEquals(2L,postImageRepository.count());
+        //then
+    }
+    @Test
+    @DisplayName("이미지 글 1개 확인 ")
+    public void test12() throws Exception {
+        //given
+        Long postId= newImgPost();
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}",postId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+        //then
+
+    }
+    @Test
+    @DisplayName("글 삭제 ")
+    public void test13() throws Exception {
+        //given
+        Long postId=newImgPost();
+        Cookie cookie=getCookie();
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/{postId}",postId)
+                        .cookie(cookie)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        Assertions.assertEquals(0,postRepository.count());
+
+    }
+
+    @Test
+    @DisplayName("이미지 글 수정")
+    public void test14() throws Exception {
+        //given
+        Long postId=newImgPost();
+        Cookie cookie=getCookie();
+
+        EditPostDto editPostDto=EditPostDto.builder()
+                .content("내용 수정")
+                .title("제목 수정")
+                .category("TRADE")
+                .build();
+
+        Post post=postRepository.getPostById(postId);
+
+        //첫 번쨰 파일을 삭제한다고 가정... 파일을 정확히 알 수 없으니까...
+        List<String> deleteFile=new ArrayList<>();
+        deleteFile.add(post.getImgUrls().get(0).getImgFileName());
+
+        MockMultipartFile file2=new MockMultipartFile("files", "한강.jpg", "image/jpg",
+                new FileInputStream(new File("C:/test/한강.jpg")));
+
+
+        String json=objectMapper.writeValueAsString(editPostDto);
+        String jsonFile=objectMapper.writeValueAsString(deleteFile);
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/posts/{postId}",postId)
+                        .file(new MockMultipartFile("deleteFiles","","application/json",jsonFile.getBytes(StandardCharsets.UTF_8)))
+                        .file(file2)
+                        .file(new MockMultipartFile("editPostDto","","application/json",json.getBytes(StandardCharsets.UTF_8)))
+                        .cookie(cookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        //then
+        Post resultPost=postRepository.getPostById(postId);
+        Assertions.assertEquals("내용 수정",resultPost.getContent());
+        Assertions.assertEquals("제목 수정",resultPost.getTitle());
+        Assertions.assertEquals("거래",resultPost.getCategory().getCategoryName().getCategory());
+        Assertions.assertEquals(1L,postImageRepository.count());
     }
 
 

@@ -59,7 +59,8 @@ dependencies {
     //test용 h2
     runtimeOnly 'com.h2database:h2'
 
-
+    //s3 설정
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

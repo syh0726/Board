@@ -38,7 +38,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         if(cookies==null){
             log.error("쿠키가 없음");
             throw new UnAuthException();
-        }
+    }
 
         String accessToken=cookies[0].getValue();
         Session session=sessionRepository.findByAccessToken(accessToken);

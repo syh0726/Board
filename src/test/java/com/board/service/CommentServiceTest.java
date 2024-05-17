@@ -27,6 +27,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -118,25 +121,23 @@ public class CommentServiceTest {
 
     }
     public Long newPost(){
-        Long id=getId();
-
-        NewPostDto postDto=NewPostDto.builder()
-                .title("test제목")
-                .content("test내용")
+        NewPostDto testPost= NewPostDto.builder()
                 .category("FREE")
+                .title("안녕하세요")
+                .content("테스트테스트테스트")
                 .build();
+
 
         NewPostServiceDto newPostServiceDto=NewPostServiceDto.builder()
-                .newPostDto(postDto)
-                .id(id)
+                .newPostDto(testPost)
+                .id(getId())
                 .build();
 
-        postService.newPost(newPostServiceDto);
+        List<String> list=new ArrayList<>();
+        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto,list);
+        Long id=getActivictyResponseDto.getPostList().get(0).getPostId();
 
-        GetActivictyResponseDto getActivictyResponseDto=postService.newPost(newPostServiceDto);
-        Long postId=getActivictyResponseDto.getPostList().get(0).getPostId();
-
-        return postId;
+        return id;
     }
 
     @Test
